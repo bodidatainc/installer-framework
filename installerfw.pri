@@ -90,8 +90,11 @@ LIBS += -L$$IFW_LIB_PATH
 # The order is important. The linker needs to parse archives in reversed dependency order.
 equals(TEMPLATE, app):LIBS += -linstaller
 win32:equals(TEMPLATE, app) {
-    LIBS += -luser32
+    LIBS += -loleaut32 -luser32     # 7zip
+    LIBS += -ladvapi32 -lpsapi      # kdtools
+    LIBS += -lole32 -lshell32       # createshortcutoperation
 }
+
 unix:!macx:LIBS += -lutil
 macx:LIBS += -framework Carbon -framework Security
 
@@ -105,11 +108,8 @@ macx:LIBS += -framework Carbon -framework Security
     contains(QT_CONFIG, shared): CONFIG += shared
 }
 
-QT += uitools core-private
-CONFIG(static, static|shared) {
-    win32:QT += winextras
-    QT += concurrent network qml xml
-}
+QT += uitools core-private concurrent network qml xml
+win32:QT += winextras
 CONFIG += depend_includepath no_private_qt_headers_warning c++11
 
 exists(".git") {
